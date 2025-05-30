@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Our Team</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5feff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .team-section {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .team-section h2 {
+            color: #e76f51;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: fadeInDown 2s;
+        }
+
+        .team-member {
+            position: relative;
+            background-color: #ead9e7;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #e76f51;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .team-member h3 {
+            margin-top: 10px;
+            color: #2d2d2d;
+            font-size: 1.5rem;
+            font-weight: 600;
+            animation: fadeInUp 2s ease-in;
+        }
+
+        .team-member p {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .team-member .role {
+            font-weight: bold;
+            color: #e76f51;
+            margin-bottom: 15px;
+        }
+
+        .team-member .social-icons a {
+            display: inline-block;
+            margin: 0 5px;
+            color: #000000;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .team-member .social-icons a:hover {
+            color: #030303;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .team-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="team-section">
+        <h2>Meet Our Team</h2>
+        <div class="team-container">
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='Images/m1.png') }}" alt="Mahek Khan">
+
+                <h3>Mahek Khan</h3>
+                <div class="role">Frontend Developer</div>
+                <div class="social-icons">
+                    <a href="https://facebook.com/" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+                    <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/mahekkhan78" target="_blank"><i class="bi bi-github"></i></a>
+                    <a href="https://linkedin.com/in/mahek-khan-382463317" target="_blank"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='Images/s1.png') }}" alt="Srushti Hiwarkar">
+                <h3>Srushti Hiwarkar</h3>
+                <div class="role">Frontend Developer</div>
+                <div class="social-icons">
+                    <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+                    <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/Srushti2811" target="_blank"><i class="bi bi-github"></i></a>
+                    <a href="https://linkedin.com/in/srushti-hiwarkar-3b084428a" target="_blank"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='Images/k1.png') }}" alt="Khushi Domane">
+                <h3>Khushi Domane</h3>
+                <div class="role">Backend Developer</div>
+                <div class="social-icons">
+                    <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+                    <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/KhushiDhomane09" target="_blank"><i class="bi bi-github"></i></a>
+                    <a href="https://www.linkedin.com/in/khushi-dhomane-9289a728a" target="_blank"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='Images/a1.png') }}" alt="Aayushi Wankhede">
+                <h3>Aayushi Wankhede</h3>
+                <div class="role">Backend Developer</div>
+                <div class="social-icons">
+                    <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+                    <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/AyushiAD" target="_blank"><i class="bi bi-github"></i></a>
+                    <a href="https://linkedin.com/in/ayushi-wankhade-211baa276" target="_blank"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
