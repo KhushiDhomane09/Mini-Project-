@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback Form</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+      margin: 0;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .feedback-container {
+      background: rgb(244, 244, 244);
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .rating-group, .emoji-group {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    #thank-you-message {
+      display: none;
+      color: green;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .form-check-label, .form-label, input, textarea {
+      font-size: 14px;
+    }
+    textarea {
+      height: 60px;
+      resize: vertical;
+    }
+    h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    p {
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      padding: 8px;
+      font-size: 15px;
+    }
+    @media (max-width: 576px) {
+      .rating-group {
+        flex-wrap: wrap;
+      }
+      .rating-group label {
+        width: calc(20% - 5px);
+        margin-bottom: 5px;
+        text-align: center;
+      }
+      .emoji-group {
+        justify-content: space-around;
+      }
+      .emoji-group span {
+        font-size: 1.2em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="feedback-container">
+  <h2>Feedback Form</h2>
+  <p class="text-muted text-center">Share your thoughts with us!</p>
+
+  <form id="feedback-form">
+    <div class="mb-2">
+      <label for="name" class="form-label">Your Name</label>
+      <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
+    </div>
+
+    <div class="mb-2">
+      <label for="email" class="form-label">Email Address</label>
+      <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Overall Rating</label>
+      <div class="rating-group">
+        <label><input type="radio" name="rating" value="1" required> 1</label>
+        <label><input type="radio" name="rating" value="2"> 2</label>
+        <label><input type="radio" name="rating" value="3"> 3</label>
+        <label><input type="radio" name="rating" value="4"> 4</label>
+        <label><input type="radio" name="rating" value="5"> 5</label>
+        <label><input type="radio" name="rating" value="6"> 6</label>
+        <label><input type="radio" name="rating" value="7"> 7</label>
+        <label><input type="radio" name="rating" value="8"> 8</label>
+        <label><input type="radio" name="rating" value="9"> 9</label>
+        <label><input type="radio" name="rating" value="10"> 10</label>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Satisfaction with the Website</label>
+      <div class="emoji-group">
+        <span>😡</span><span>🙁</span><span>😐</span><span>🙂</span><span>😃</span>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <label for="improvement" class="form-label">Suggestions</label>
+      <textarea id="improvement" class="form-control" placeholder="Type suggestions here"></textarea>
+    </div>
+
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="agree" required>
+      <label class="form-check-label" for="agree">I agree to the feedback terms.</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+  </form>
+
+  <div id="thank-you-message">Thank you for your feedback!</div>
+</div>
+
+<!-- Firebase JS SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyC9iLSq0p8Up1pYP1mxEwv7DdsJ0jVkkNU",
+    authDomain: "login-243c0.firebaseapp.com",
+    projectId: "login-243c0",
+    storageBucket: "login-243c0.firebasestorage.app",
+    messagingSenderId: "464732820428",
+    appId: "1:464732820428:web:31155f69a5988d51338369"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  document.getElementById("feedback-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const rating = document.querySelector("input[name='rating']:checked")?.value || "";
+    const suggestion = document.getElementById("improvement").value.trim();
+
+    db.collection("feedbacks").add({
+      name: name,
+      email: email,
+      rating: rating,
+      suggestion: suggestion,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      document.getElementById("thank-you-message").style.display = "block";
+      document.getElementById("feedback-form").reset();
+    })
+    .catch((error) => {
+      alert("Error submitting feedback: " + error.message);
+    });
+  });
+</script>
+
+</body>
+</html>
