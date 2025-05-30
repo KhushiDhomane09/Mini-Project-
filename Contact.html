@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Form with Firebase</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+    body {
+      background: linear-gradient(135deg,#e0c3fc,#8ec5fc);
+      min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;
+    }
+    .contact-container {
+      display:flex; justify-content:space-between;
+      background:#fff; width:80%; max-width:900px; border-radius:20px;
+      padding:30px; box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    }
+    .contact-form { width:60%; }
+    .contact-form h2 {
+      margin-bottom:15px; font-size:22px; color:#6a1b9a;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width:100%; padding:10px; margin-bottom:12px;
+      border:1px solid lightblue; border-radius:8px; font-size:16px;
+    }
+    .contact-form textarea { resize:vertical; min-height:80px; }
+    .contact-form button {
+      width:100%; max-width:200px; padding:10px 20px;
+      background:linear-gradient(to right,#ff9966,#ff5e62);
+      border:none; border-radius:8px; color:#fff; font-size:16px;
+      cursor:pointer; transition:background 0.3s; margin-top:8px;
+    }
+    .contact-form button:hover {
+      background:linear-gradient(to right,#ff5e62,#ff9966);
+    }
+    .contact-image { width:40%; display:flex; justify-content:center; align-items:center; }
+    .contact-image img {
+      max-width:100%; border-radius:10px; height:auto;
+    }
+    .success-message {
+      margin-top:10px; color:green; font-size:16px;
+      display:none; text-align:center;
+    }
+    @media(max-width:768px){
+      .contact-container{flex-direction:column;align-items:center;width:95%;padding:20px;}
+      .contact-form,.contact-image{width:100%;}
+      .contact-image{margin-top:20px;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contact-container">
+    <div class="contact-form">
+      <h2>Contact Us</h2>
+      <form id="contactForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+        <input type="tel" id="phone" placeholder="Your Phone Number" required pattern="[0-9]{10}">
+        <input type="text" id="subject" placeholder="Your Subject" required>
+        <textarea id="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+      <p class="success-message" id="successMessage">
+        Form submitted successfully! Thank you for contacting us. We will get back to you soon.
+      </p>
+    </div>
+    <div class="contact-image">
+      <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTXNbEqh3Neyp5WmUjmWGSFyHQzA1xIdVksK-YHgCTP1Xa3akLK" alt="Contact Us Image">
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC9iLSq0p8Up1pYP1mxEwv7DdsJ0jVkkNU",
+      authDomain: "login-243c0.firebaseapp.com",
+      projectId: "login-243c0",
+      storageBucket: "login-243c0.firebasestorage.app",
+      messagingSenderId: "464732820428",
+      appId: "1:464732820428:web:31155f69a5988d51338369"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Handle form submission
+    document.getElementById("contactForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Collect form data
+      const data = {
+        name:    document.getElementById("name").value.trim(),
+        email:   document.getElementById("email").value.trim(),
+        phone:   document.getElementById("phone").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        message: document.getElementById("message").value.trim(),
+        sentAt:  firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      try {
+        // Save to Firestore
+        await db.collection("contacts").add(data);
+
+        // Show success and reset form
+        document.getElementById("successMessage").style.display = "block";
+        e.target.reset();
+      } catch (err) {
+        alert("Error submitting form: " + err.message);
+      }
+    });
+  </script>
+
+</body>
+</html>
