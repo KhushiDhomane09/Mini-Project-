@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to Text - NMF Extraction</title>
+
+  <!-- Correct Flask static linking -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+  <!-- Inline CSS (You can move this to styles.css if needed) -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #e7b5df, #4aa3e5); color: rgb(239, 127, 127); display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+    .container { text-align: center; background-color: rgba(14, 14, 14, 0.6); padding: 30px 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); max-width: 400px; }
+    .container h2 { font-size: 26px; margin-bottom: 10px; }
+    input[type="file"] { margin: 15px 0; padding: 10px; width: 100%; background-color: #333; color: white; border: 2px solid white; border-radius: 5px; cursor: pointer; }
+    button { background-color: #68c7ff; color: white; border: none; padding: 12px 20px; margin-top: 15px; cursor: pointer; border-radius: 8px; font-size: 16px; }
+    .result { background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; }
+    #outputText { padding: 10px; background-color: white; color: #333; border-radius: 5px; word-wrap: break-word; font-size: 16px; max-height: 150px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2 style="color: white;">Image to Text Conversion</h2>
+    <form id="uploadForm" enctype="multipart/form-data" method="POST">
+      <input type="file" id="fileInput" name="file" accept="image/*">
+      <button type="submit">Extract Text</button>
+    </form>
+
+    <div class="result" id="result">
+      <h3>Extracted Text:</h3>
+      <div id="outputText">Your extracted text will appear here.</div>
+    </div>
+  </div>
+
+  <!-- JavaScript Section (inline or external via script.js) -->
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const fileInput = document.getElementById('fileInput');
+
+      if (!fileInput.files[0]) {
+        document.getElementById('outputText').innerText = 'Please select an image.';
+        return;
+      }
+
+      console.log('Uploading file:', fileInput.files[0]);
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+        if (result.expression) {
+          document.getElementById('outputText').innerText = `Predicted Expression: ${result.expression}`;
+        } else {
+          document.getElementById('outputText').innerText = 'Error: ' + result.message;
+        }
+      } else {
+        document.getElementById('outputText').innerText = 'Error uploading the file.';
+      }
+    });
+  </script>
+
+</body>
+</html>
