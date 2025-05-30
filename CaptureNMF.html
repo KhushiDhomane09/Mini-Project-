@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ISL Non-Manual Feature Detection</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #c9d3e6, #2575fc);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #video-container {
+      position: relative;
+      width: 640px;
+      height: 480px;
+    }
+
+    #webcam, #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 640px;
+      height: 480px;
+      border-radius: 10px;
+    }
+
+    #webcam {
+      z-index: 1;
+      border: 5px solid white;
+      object-fit: cover;
+      transform: scaleX(-1); /* Mirror the video */
+    }
+
+    #overlay {
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      font-size: 20px;
+    }
+
+    @media (max-width: 768px) {
+      #video-container {
+        width: 100%;
+        height: auto;
+      }
+
+      #webcam, #overlay {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Non-Manual Feature Detection for Indian Sign Language</h1>
+
+  <div id="video-container">
+    <video id="webcam" autoplay playsinline muted></video>
+    <canvas id="overlay" width="640" height="480"></canvas>
+  </div>
+
+  <div id="output">Detected NMF will appear here...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+  <script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('overlay');
+    const ctx = canvas.getContext('2d');
+
+    async function setupCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        return new Promise(resolve => {
+          video.onloadedmetadata = () => resolve(video);
+        });
+      } catch (err) {
+        console.error("Webcam access error:", err);
+        alert("Webcam access error. Please check your permissions.");
+      }
+    }
+
+    function drawBox(faces) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'lime';
+      ctx.lineWidth = 2;
+      ctx.font = '20px Arial';
+      ctx.fillStyle = 'yellow';
+
+      faces.forEach(face => {
+        const x = canvas.width - face.x - face.w;
+        ctx.strokeRect(x, face.y, face.w, face.h);
+        ctx.fillText(face.expression, x, face.y - 10);
+      });
+    }
+
+    async function captureAndSendFrame() {
+      if (!video.videoWidth || !video.videoHeight) return;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = video.videoWidth;
+      tempCanvas.height = video.videoHeight;
+      const tempCtx = tempCanvas.getContext('2d');
+
+      // Mirror the frame
+      tempCtx.translate(video.videoWidth, 0);
+      tempCtx.scale(-1, 1);
+      tempCtx.drawImage(video, 0, 0);
+
+      // Convert the image to base64
+      const base64Image = tempCanvas.toDataURL('image/jpeg').split(',')[1];
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: base64Image })
+        });
+
+        const data = await res.json();
+        console.log(data);  // For debugging
+
+        if (data.success && data.expression) {
+          document.getElementById('output').innerText = `Detected Expression: ${data.expression}`;
+
+          // 🟢 Draw dummy face box in center of canvas
+          const dummyFace = {
+            x: 200,
+            y: 120,
+            w: 240,
+            h: 240,
+            expression: data.expression
+          };
+          drawBox([dummyFace]);
+        } else {
+          document.getElementById('output').innerText = "Error predicting expression.";
+        }
+
+      } catch (err) {
+        console.error('Prediction error:', err);
+      }
+    }
+
+    setupCamera().then(() => {
+      video.play();
+      setInterval(captureAndSendFrame, 500); // Capture every 0.5 seconds
+ // Every second
+    });
+  </script>
+</body>
+</html>
